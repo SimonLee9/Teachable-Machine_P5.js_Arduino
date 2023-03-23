@@ -1,0 +1,38 @@
+/*
+Modify modelURL and serialPort to your settings
+*/
+const modelURL = 'https://teachablemachine.withgoogle.com/models/_______/';
+const serialPort = 'COM_';
+
+let classifier;
+let serial;
+let label;
+
+function preload() {
+    classifier = ml5.soundClassifier(soundModelURL + 'model.json');
+    serial = new p5.SerialPort();
+}
+
+function setup() {
+    serial.open(serialPort);
+    createCanvas(320, 240);
+    classifier.classify(gotResult);
+}
+
+function draw() {
+    background(0);
+    fill(255);
+    textSize(32);
+    textAlign(CENTER);
+    text(label, width / 2, height - 4);
+}
+
+function gotResult(error, results) {
+    if (error) {
+        console.error(error);
+        return;
+    }
+    label = String(results[0].label);
+    console.log(label);
+    serial.write(label);
+}
